@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার অনলাইন শপ - ই-কমার্স</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #25D366;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 60px; }
+
+        /* Header & Navigation */
+        header { background: var(--primary-color); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .cart-icon-btn { background: white; color: var(--primary-color); border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; position: relative; }
+        .cart-badge { background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; }
+
+        /* Search & Filter Section */
+        .controls { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; outline: none; }
+        .category-select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; outline: none; background: white; }
+
+        /* Product Grid */
+        .products-grid { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 200px; object-fit: cover; background-color: #e2e8f0; }
+        .product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+        .product-category { font-size: 12px; color: #64748b; margin-bottom: 10px; text-transform: uppercase; }
+        .product-price { font-size: 20px; color: var(--primary-color); font-weight: bold; margin-top: auto; margin-bottom: 10px; }
+        .add-cart-btn { background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        .add-cart-btn:hover { background: var(--secondary-color); }
+
+        /* Cart Modal Drawer */
+        .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: flex-end; }
+        .cart-modal.open { display: flex; }
+        .cart-content { background: white; width: 100%; max-width: 450px; height: 100%; padding: 20px; display: flex; flex-direction: column; box-shadow: -4px 0 15px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin: 20px 0; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .cart-item-details { flex: 1; }
+        .cart-item-title { font-weight: 600; }
+        .cart-item-price { color: #64748b; font-size: 14px; }
+        .qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+        .qty-btn { background: #e2e8f0; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .cart-footer { border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .total-price { font-size: 20px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .checkout-btn { background: var(--accent-color); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .checkout-btn:hover { opacity: 0.9; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 0 10px; }
+            .product-img { height: 140px; }
+            .product-title { font-size: 15px; }
+            .product-price { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">আমার শপ</div>
+            <button class="cart-icon-btn" onclick="toggleCart()">
+                🛒 কার্ট <span class="cart-badge" id="cart-count">০</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <div class="controls">
+        <input type="text" id="search" class="search-box" placeholder="প্রোডাক্ট খুঁজুন..." oninput="filterProducts()">
+        <select id="category" class="category-select" onchange="filterProducts()">
+            <option value="all">সব ক্যাটাগরি</option>
+            <option value="electronics">ইলেকট্রনিক্স</option>
+            <option value="fashion">ফ্যাশন</option>
+            <option value="gadgets">গ্যাজেটস</option>
+        </select>
+    </div>
+
+    <!-- Products Grid -->
+    <main class="products-grid" id="product-list"></main>
+
+    <!-- Cart Modal Drawer -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>আপনার কার্ট</h2>
+                <button class="close-btn" onclick="toggleCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cart-items">
+                <p style="text-align: center; color: #64748b; margin-top: 50px;">কার্ট বর্তমানে খালি রয়েছে</p>
+            </div>
+            <div class="cart-footer">
+                <div class="total-price">
+                    <span>মোট:</span>
+                    <span>৳ <span id="total-price">০</span></span>
+                </div>
+                <button class="checkout-btn" onclick="checkoutWhatsApp()">
+                    📱 WhatsApp-এ অর্ডার নিশ্চিত করুন
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ১. প্রোডাক্ট ডেটা (এখানে নতুন প্রোডাক্ট যুক্ত বা এডিট করতে পারবেন)
+        const products = [
+            { id: 1, name: "স্মার্ট ওয়াচ Z8", category: "gadgets", price: 1850, image: "https://picsum.photos/300/200?random=1" },
+            { id: 2, name: "ওয়ারলেস ইয়ারবাড", category: "electronics", price: 1200, image: "https://picsum.photos/300/200?random=2" },
+            { id: 3, name: "প্রিমিয়াম কটন টি-শার্ট", category: "fashion", price: 550, image: "https://picsum.photos/300/200?random=3" },
+            { id: 4, name: "পাওয়ার ব্যাংক ১০,০০০mAh", category: "electronics", price: 1450, image: "https://picsum.photos/300/200?random=4" },
+            { id: 5, name: "স্পোর্টস জুতা", category: "fashion", price: 2100, image: "https://picsum.photos/300/200?random=5" },
+            { id: 6, name: "ব্লুটুথ স্পিকার", category: "gadgets", price: 950, image: "https://picsum.photos/300/200?random=6" }
+        ];
+
+        let cart = [];
+        // ⚠️ আপনার হোয়াটসঅ্যাপ নম্বরটি এখানে দিন (যেমন: 88017XXXXXXXX)
+        const WHATSAPP_NUMBER = "8801700000000"; 
+
+        // ২. প্রোডাক্ট রেন্ডার করা
+        function renderProducts(items) {
+            const list = document.getElementById("product-list");
+            list.innerHTML = "";
+            if (items.length === 0) {
+                list.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #64748b;">কোনো প্রোডাক্ট পাওয়া যায়নি</p>`;
+                return;
+            }
+            items.forEach(p => {
+                list.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.image}" alt="${p.name}" class="product-img">
+                        <div class="product-info">
+                            <div class="product-category">${p.category}</div>
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-price">৳ ${p.price}</div>
+                            <button class="add-cart-btn" onclick="addToCart(${p.id})">কার্টে যোগ করুন</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ৩. সার্চ ও ফিল্টারিং
+        function filterProducts() {
+            const searchVal = document.getElementById("search").value.toLowerCase();
+            const catVal = document.getElementById("category").value;
+
+            const filtered = products.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchVal);
+                const matchesCategory = catVal === "all" || p.category === catVal;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderProducts(filtered);
+        }
+
+        // ৪. কার্টে যোগ করা
+        function addToCart(id) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                const product = products.find(p => p.id === id);
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartUI();
+        }
+
+        // ৫. পরিমাণ পরিবর্তন করা
+        function changeQty(id, delta) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCartUI();
+        }
+
+        // ৬. কার্ট আপডেট
+        function updateCartUI() {
+            const cartItems = document.getElementById("cart-items");
+            const totalPriceEl = document.getElementById("total-price");
+            const cartCountEl = document.getElementById("cart-count");
+
+            const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+            cartCountEl.innerText = totalQty;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = `<p style="text-align: center; color: #64748b; margin-top: 50px;">কার্ট বর্তমানে খালি রয়েছে</p>`;
+                totalPriceEl.innerText = "০";
+                return;
+            }
+
+            cartItems.innerHTML = "";
+            let total = 0;
+
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">৳ ${item.price} x ${item.qty}</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        <div style="font-weight: bold;">৳ ${item.price * item.qty}</div>
+                    </div>
+                `;
+            });
+
+            totalPriceEl.innerText = total;
+        }
+
+        // ৭. কার্ট অন/অফ
+        function toggleCart() {
+            document.getElementById("cart-modal").classList.toggle("open");
+        }
+
+        // ৮. WhatsApp Checkout
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                alert("আপনার কার্ট খালি!");
+                return;
+            }
+
+            let message = "হ্যালো! আমি নিচের প্রোডাক্টগুলো অর্ডার করতে চাই:%0A%0A";
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                message += `${index + 1}. *${item.name}*%0A   পরিমাণ: ${item.qty} টি%0A   মূল্য: ৳${subtotal}%0A%0A`;
+                total += subtotal;
+            });
+
+            message += `*সর্বমোট মূল্য:* ৳${total}`;
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+        }
+
+        // প্রাথমিক রেন্ডার
+        renderProducts(products);
+    </script>
+</body>
+</html>
