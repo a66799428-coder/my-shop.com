@@ -28,7 +28,7 @@
     </main>
 
     <script>
-        // ১. প্রোডাক্ট ডেটা (সবগুলো ছবিসহ)
+        // ১. আপনার GitHub-এ আপলোড থাকা ৪টি ফাইলের সঠিক নাম
         const products = [
             {
                 id: 1, 
@@ -86,7 +86,6 @@
         function changeImage(productId, newSrc, el) {
             document.getElementById(`main-img-${productId}`).src = newSrc;
             
-            // বর্ডার হাইলাইট চেঞ্জ করা
             const thumbs = el.parentElement.querySelectorAll('img');
             thumbs.forEach(t => t.classList.remove('active-thumb', 'border-blue-600'));
             thumbs.forEach(t => t.classList.add('border-gray-200'));
@@ -107,7 +106,6 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // পেজ লোড হলে রেন্ডার হবে
         renderProducts();
     </script>
 </body>
